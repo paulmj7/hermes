@@ -1,0 +1,11 @@
+{
+  "port": ":5000",
+  "roots": [
+    {
+      "path": "/Users/paul/Desktop"
+    },
+    {
+      "path": "/Users/paul/Music"
+    }
+  ]
+}
