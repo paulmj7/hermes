@@ -1,6 +1,6 @@
 # Hermes
 
-Hermes is a an api to relay the contents of a volume in real time, similar to Apache's live file browsing. When paired with Homebase [COMING SOON], this combination provides a distributed, multivolume storage server.
+Hermes is an api to relay the contents of a volume in real time, similar to Apache's live file browsing. When paired with Homebase [COMING SOON], this combination provides a distributed, multivolume storage server.
 
 From [Wikipedia](https://en.wikipedia.org/wiki/Hermes), "Hermes is considered the herald of the gods ... Hermes functioned as the emissary and messenger."
 
@@ -15,6 +15,8 @@ cd src
 go run .
 ```
 
+For production use, don't forget to portfoward the webserver properly.
+
 ## Usage
 
 - POST /api
@@ -26,6 +28,8 @@ go run .
   - ex. returns x91js -> localhost:5000/api/send?key=x91js
 - GET /api/send?key=
   - 200 streams the file for download
+- POST /api/upload
+  - Send file through multipart form to the server at the specified path
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
@@ -33,4 +37,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Please make sure to update tests as appropriate.
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](https://github.com/paulmj7/hermes/blob/master/LICENSE)

@@ -28,11 +28,16 @@ type ResBody struct {
 }
 
 type Config struct {
-	Port  string `json:"port"`
-	Roots []Root `json:"roots"`
+	Port      string   `json:"port"`
+	Roots     []Root   `json:"roots"`
+	Blacklist []BLPath `json:"blacklist"`
 }
 
 type Root struct {
+	Path string `json:"path"`
+}
+
+type BLPath struct {
 	Path string `json:"path"`
 }
 
@@ -52,11 +57,29 @@ func ReadConfig(configPath string) Config {
 	return config
 }
 
-func ToString(roots []Root) []string {
+func RootsStrings(roots []Root) []string {
 	var extracted []string
 	for _, item := range roots {
 		extracted = append(extracted, item.Path)
 	}
 
 	return extracted
+}
+
+func BLStrings(bl []BLPath) []string {
+	var extracted []string
+	for _, item := range bl {
+		extracted = append(extracted, item.Path)
+	}
+
+	return extracted
+}
+
+func BLMap(bl []BLPath) map[string]bool {
+	m := make(map[string]bool)
+	for _, item := range bl {
+		m[item.Path] = true
+	}
+
+	return m
 }

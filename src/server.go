@@ -7,14 +7,17 @@ import (
 )
 
 var roots []string
+var blacklist map[string]bool
 
 func main() {
 	config := ReadConfig("config.json")
-	roots = ToString(config.Roots)
+	roots = RootsStrings(config.Roots)
+	blacklist = BLMap(config.Blacklist)
 	http.HandleFunc("/api", Index)
 	http.HandleFunc("/api/move", ChangeDir)
 	http.HandleFunc("/api/retrieve", GetFile)
 	http.HandleFunc("/api/send", SendFile)
+	http.HandleFunc("/api/upload", SaveFile)
 	fmt.Println("Listening on " + config.Port)
 	log.Fatal(http.ListenAndServe(config.Port, nil))
 }

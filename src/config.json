@@ -7,5 +7,10 @@
     {
       "path": "/Users/paul/Music"
     }
+  ],
+  "blacklist": [
+    {
+      "path": "/Users/paul/Desktop/temp"
+    }
   ]
 }

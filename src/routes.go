@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -16,7 +17,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 	for _, item := range roots {
 		name, _ := SplitPath(item, "/")
-		tempItem := Item{Name: name, Path: item, Parent: "..", Root: item, IsFile: false, Size: -1, DateMod: "", ID: i}
+		tempItem := Item{Name: name, Path: item, Parent: "", Root: item, IsFile: false, Size: -1, DateMod: "", ID: i}
 		rootbrowser = append(rootbrowser, tempItem)
 		i++
 	}
@@ -44,11 +45,13 @@ func ChangeDir(w http.ResponseWriter, r *http.Request) {
 
 	if !FromRoot(req.Path, req.Root) {
 		fmt.Println(req.Path + " not available from root: " + req.Root)
+		return
 	}
 
 	files, er := ioutil.ReadDir(req.Path)
 	if er != nil {
 		fmt.Println(er)
+		return
 	}
 
 	contents := []Item{}
@@ -56,6 +59,9 @@ func ChangeDir(w http.ResponseWriter, r *http.Request) {
 
 	for _, f := range files {
 		path := req.Path + "/" + f.Name()
+		if blacklist[path] {
+			continue
+		}
 		isFile, size, dateMod, e := ItemInfo(path)
 		if e != nil {
 			fmt.Println(e)
@@ -88,6 +94,7 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&req)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	data := []byte(req.Path)
@@ -134,4 +141,27 @@ func SendFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.ServeContent(w, r, path, fi.ModTime(), f)
+}
+
+func SaveFile(w http.ResponseWriter, r *http.Request) {
+	SetupResponse(&w, r)
+
+	r.ParseMultipartForm(32 << 20)
+	path := r.FormValue("path")
+	fi, handler, err := r.FormFile("file")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	defer fi.Close()
+
+	f, e := os.OpenFile(path+"/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+	if e != nil {
+		fmt.Println(e)
+		return
+	}
+
+	defer f.Close()
+	io.Copy(f, fi)
 }
