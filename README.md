@@ -30,6 +30,7 @@ For production use, don't forget to portfoward the webserver properly.
   - 200 streams the file for download
 - POST /api/upload
   - Send file through multipart form to the server at the specified path
+  - Upload limit: 32 << 40 bytes
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

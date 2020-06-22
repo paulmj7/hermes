@@ -3,14 +3,11 @@
   "roots": [
     {
       "path": "/Users/paul/Desktop"
-    },
-    {
-      "path": "/Users/paul/Music"
     }
   ],
   "blacklist": [
     {
-      "path": "/Users/paul/Desktop/temp"
+      "path": "/Users/paul/Music"
     }
   ]
 }

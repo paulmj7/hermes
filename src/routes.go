@@ -146,7 +146,7 @@ func SendFile(w http.ResponseWriter, r *http.Request) {
 func SaveFile(w http.ResponseWriter, r *http.Request) {
 	SetupResponse(&w, r)
 
-	r.ParseMultipartForm(32 << 20)
+	r.ParseMultipartForm(32 << 40)
 	path := r.FormValue("path")
 	fi, handler, err := r.FormFile("file")
 	if err != nil {
