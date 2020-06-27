@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -146,7 +147,7 @@ func SendFile(w http.ResponseWriter, r *http.Request) {
 func SaveFile(w http.ResponseWriter, r *http.Request) {
 	SetupResponse(&w, r)
 
-	r.ParseMultipartForm(32 << 40)
+	r.ParseMultipartForm(32 << 20)
 	path := r.FormValue("path")
 	fi, handler, err := r.FormFile("file")
 	if err != nil {
@@ -156,12 +157,37 @@ func SaveFile(w http.ResponseWriter, r *http.Request) {
 
 	defer fi.Close()
 
-	f, e := os.OpenFile(path+"/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+	f, e := os.Create(path + "/" + handler.Filename)
 	if e != nil {
 		fmt.Println(e)
 		return
 	}
+	wt := bufio.NewWriter(f)
 
 	defer f.Close()
-	io.Copy(f, fi)
+	n, er := io.Copy(wt, fi)
+	fmt.Println("write", n)
+	if er != nil {
+		fmt.Println(er)
+		return
+	}
+	wt.Flush()
+}
+
+func CreateFolder(w http.ResponseWriter, r *http.Request) {
+	SetupResponse(&w, r)
+
+	decoder := json.NewDecoder(r.Body)
+	var req CreateReqBody
+	err := decoder.Decode(&req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = os.Mkdir("/"+req.Path, os.ModePerm)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 }

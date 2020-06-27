@@ -18,6 +18,7 @@ func main() {
 	http.HandleFunc("/api/retrieve", GetFile)
 	http.HandleFunc("/api/send", SendFile)
 	http.HandleFunc("/api/upload", SaveFile)
+	http.HandleFunc("/api/create", CreateFolder)
 	fmt.Println("Listening on " + config.Port)
 	log.Fatal(http.ListenAndServe(config.Port, nil))
 }
