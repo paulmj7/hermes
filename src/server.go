@@ -14,11 +14,12 @@ func main() {
 	roots = RootsStrings(config.Roots)
 	blacklist = BLMap(config.Blacklist)
 	http.HandleFunc("/api", Index)
-	http.HandleFunc("/api/move", ChangeDir)
+	http.HandleFunc("/api/change_dir", ChangeDir)
 	http.HandleFunc("/api/retrieve", GetFile)
 	http.HandleFunc("/api/send", SendFile)
 	http.HandleFunc("/api/upload", SaveFile)
 	http.HandleFunc("/api/create", CreateFolder)
+	http.HandleFunc("/api/move", Move)
 	fmt.Println("Listening on " + config.Port)
 	log.Fatal(http.ListenAndServe(config.Port, nil))
 }

@@ -1,0 +1,15 @@
+language: go
+
+before_script:
+  - GO_FILES=$(find . -iname "*.go" -type f | grep -v /vendor/)
+  - go get github.com/golang/lint/golint
+  - go get honnef.co/go/tools/cmd/megacheck
+  - go get github.com/fzipp/gocyclo
+
+script:
+  - test -z $(gofmt -s -l $GO_FILES)
+  - go test -v ./src
+  - go vet ./src
+  - megacheck ./src
+  - gocyclo -over 19 $GO_FILES
+  - golint -set_exit_status $(go list ./src)

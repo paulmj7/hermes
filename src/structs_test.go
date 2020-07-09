@@ -20,10 +20,10 @@ func TestConfigStruct(t *testing.T) {
 	}
 }
 
-func TestToString(t *testing.T) {
+func TestRootsStrings(t *testing.T) {
 	config := ReadConfig("test.json")
 
-	rootStrings := ToString(config.Roots)
+	rootStrings := RootsStrings(config.Roots)
 
 	if rootStrings[0] != "/usr/tmp/A" {
 		t.Error("ToString failed for first root")
