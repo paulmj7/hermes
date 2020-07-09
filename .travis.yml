@@ -10,4 +10,4 @@ script:
   - go test -v ./src
   - go vet ./src
   - gocyclo -over 19 $GO_FILES
-  - golint -set_exit_status $(go list ./src)
+  - golint -set_exit_status $(go list ./...)
