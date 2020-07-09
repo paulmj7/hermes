@@ -2,7 +2,6 @@ language: go
 
 before_script:
   - GO_FILES=$(find . -iname "*.go" -type f | grep -v /vendor/)
-  - go get golang.org/x/lint/golint
   - go get github.com/fzipp/gocyclo
 
 script:
@@ -10,4 +9,3 @@ script:
   - go test -v ./src
   - go vet ./src
   - gocyclo -over 19 $GO_FILES
-  - golint -set_exit_status $(go list ./...)
