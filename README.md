@@ -1,5 +1,7 @@
 # Hermes
 
+[![Build Status](https://travis-ci.com/paulmj7/hermes.svg?branch=master)](https://travis-ci.com/paulmj7/hermes)
+
 Hermes is an api to relay the contents of a volume in real time, similar to Apache's live file browsing. When paired with Homebase [COMING SOON], this combination provides a distributed, multivolume storage server.
 
 From [Wikipedia](https://en.wikipedia.org/wiki/Hermes), "Hermes is considered the herald of the gods ... Hermes functioned as the emissary and messenger."
