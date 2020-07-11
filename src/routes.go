@@ -195,6 +195,8 @@ func CreateFolder(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 			return
 		}
+
+		fmt.Println("Create folder at path: " + req.Path)
 	}
 }
 
@@ -205,6 +207,7 @@ func Move(w http.ResponseWriter, r *http.Request) {
 		var req map[string]string
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&req)
+		fmt.Println("Move " + req["location"] + " to " + req["destination"])
 		err = os.Rename(req["location"], req["destination"])
 		if err != nil {
 			fmt.Println(err)
