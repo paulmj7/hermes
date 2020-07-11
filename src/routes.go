@@ -215,3 +215,22 @@ func Move(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
+func Delete(w http.ResponseWriter, r *http.Request) {
+	SetupResponse(&w, r)
+
+	if r.Method == "POST" {
+		var req map[string]string
+		decoder := json.NewDecoder(r.Body)
+		err := decoder.Decode(&req)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		err = os.RemoveAll(req["path"])
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}
+}
