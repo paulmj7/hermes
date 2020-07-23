@@ -23,7 +23,6 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		i++
 	}
 
-	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(rootbrowser)
 }
 
@@ -76,7 +75,6 @@ func ChangeDir(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println(r.RemoteAddr + " accessed " + req.Path)
-	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(contents)
 }
 
@@ -103,7 +101,6 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 	data := []byte(req.Path)
 	str := base64.StdEncoding.EncodeToString(data)
 	resBody := ResBody{Key: str}
-	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(resBody)
 }
 
@@ -145,7 +142,6 @@ func SendFile(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		w.WriteHeader(http.StatusOK)
 		http.ServeContent(w, r, path, fi.ModTime(), f)
 	}
 }
@@ -179,7 +175,6 @@ func SaveFile(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		wt.Flush()
-		w.WriteHeader(http.StatusCreated)
 	}
 }
 
@@ -219,7 +214,6 @@ func Move(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 			return
 		}
-		w.WriteHeader(http.StatusNoContent)
 	}
 }
 

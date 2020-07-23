@@ -23,7 +23,7 @@ For production use, don't forget to portfoward the webserver properly.
 
 - POST /api
   - 200 sends the root volumes being served as JSON
-- POST /api/move
+- POST /api/change_dir
   - 200 sends the contents of the current directory as JSON
 - POST /api/retrieve
   - 200 sends the url route to download the specified file
@@ -31,11 +31,13 @@ For production use, don't forget to portfoward the webserver properly.
 - GET /api/send?key=
   - 200 streams the file for download
 - POST /api/upload
-  - 200 sends file through multipart form to the server at the specified path
+  - 201 sends file through multipart form to the server at the specified path
 - POST /api/create
-  - 200 creates a named folder at the specified path
-- POST /api/delete
-  - 200 deletes file or folder at the specified path
+  - 201 creates a named folder at the specified path
+- PUT /api/move
+  - 204 moves folder or file to the specified path
+- DELETE /api/delete
+  - 204 deletes file or folder at the specified path
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
