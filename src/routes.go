@@ -13,6 +13,12 @@ import (
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	SetupResponse(&w, r)
+
+	if r.Method != http.MethodPost {
+		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	rootbrowser := []Item{}
 	i := 1
 
@@ -29,11 +35,8 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 func ChangeDir(w http.ResponseWriter, r *http.Request) {
 	SetupResponse(&w, r)
-	if (*r).Method == "OPTIONS" {
-		return
-	}
 
-	if r.Method != "POST" {
+	if r.Method != http.MethodPost {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
 	}
 
@@ -83,11 +86,7 @@ func ChangeDir(w http.ResponseWriter, r *http.Request) {
 func GetFile(w http.ResponseWriter, r *http.Request) {
 	SetupResponse(&w, r)
 
-	if (*r).Method == "OPTIONS" {
-		return
-	}
-
-	if r.Method != "POST" {
+	if r.Method != http.MethodPost {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -110,135 +109,146 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 func SendFile(w http.ResponseWriter, r *http.Request) {
 	SetupResponse(&w, r)
 
-	if (*r).Method == "OPTIONS" {
+	if r.Method != http.MethodGet {
+		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	if r.Method == "GET" {
-		keys, ok := r.URL.Query()["key"]
+	keys, ok := r.URL.Query()["key"]
 
-		if !ok || len(keys[0]) < 1 {
-			fmt.Println("Request missing parameter")
-			return
-		}
-
-		key := keys[0]
-		data := string(key)
-		str, err := base64.StdEncoding.DecodeString(data)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		path := string(str)
-		name, _ := SplitPath(path, "/")
-		fmt.Println("Sending file: " + name)
-		w.Header().Set("Content-Disposition", "attachment; filename="+name)
-
-		f, er := os.Open(path)
-		if er != nil {
-			return
-		}
-
-		defer f.Close()
-		fi, e := f.Stat()
-		if e != nil {
-			return
-		}
-
-		w.WriteHeader(http.StatusOK)
-		http.ServeContent(w, r, path, fi.ModTime(), f)
+	if !ok || len(keys[0]) < 1 {
+		fmt.Println("Request missing parameter")
+		return
 	}
+
+	key := keys[0]
+	data := string(key)
+	str, err := base64.StdEncoding.DecodeString(data)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	path := string(str)
+	name, _ := SplitPath(path, "/")
+	fmt.Println("Sending file: " + name)
+	w.Header().Set("Content-Disposition", "attachment; filename="+name)
+
+	f, er := os.Open(path)
+	if er != nil {
+		return
+	}
+
+	defer f.Close()
+	fi, e := f.Stat()
+	if e != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	http.ServeContent(w, r, path, fi.ModTime(), f)
 }
 
 func SaveFile(w http.ResponseWriter, r *http.Request) {
 	SetupResponse(&w, r)
 
-	if r.Method == "POST" {
-		r.ParseMultipartForm(32 << 20)
-		path := r.FormValue("path")
-		fi, handler, err := r.FormFile("file")
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		defer fi.Close()
-
-		f, e := os.Create(path + "/" + handler.Filename)
-		if e != nil {
-			fmt.Println(e)
-			return
-		}
-		wt := bufio.NewWriter(f)
-
-		defer f.Close()
-		n, er := io.Copy(wt, fi)
-		fmt.Println("write", n)
-		if er != nil {
-			fmt.Println(er)
-			return
-		}
-		wt.Flush()
-		w.WriteHeader(http.StatusCreated)
+	if r.Method != http.MethodPost {
+		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
+		return
 	}
+
+	r.ParseMultipartForm(32 << 20)
+	path := r.FormValue("path")
+	fi, handler, err := r.FormFile("file")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	defer fi.Close()
+
+	f, e := os.Create(path + "/" + handler.Filename)
+	if e != nil {
+		fmt.Println(e)
+		return
+	}
+	wt := bufio.NewWriter(f)
+
+	defer f.Close()
+	n, er := io.Copy(wt, fi)
+	fmt.Println("write", n)
+	if er != nil {
+		fmt.Println(er)
+		return
+	}
+	wt.Flush()
+	w.WriteHeader(http.StatusCreated)
 }
 
 func CreateFolder(w http.ResponseWriter, r *http.Request) {
 	SetupResponse(&w, r)
 
-	if r.Method == "POST" {
-		decoder := json.NewDecoder(r.Body)
-		var req CreateReqBody
-		err := decoder.Decode(&req)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		err = os.MkdirAll(req.Path, os.ModePerm)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		fmt.Println("Create folder at path: " + req.Path)
-		w.WriteHeader(http.StatusCreated)
+	if r.Method != http.MethodPost {
+		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
+		return
 	}
+
+	decoder := json.NewDecoder(r.Body)
+	var req CreateReqBody
+	err := decoder.Decode(&req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = os.MkdirAll(req.Path, os.ModePerm)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println("Create folder at path: " + req.Path)
+	w.WriteHeader(http.StatusCreated)
 }
 
 func Move(w http.ResponseWriter, r *http.Request) {
 	SetupResponse(&w, r)
 
-	if r.Method == "PUT" {
-		var req map[string]string
-		decoder := json.NewDecoder(r.Body)
-		err := decoder.Decode(&req)
-		fmt.Println("Move " + req["location"] + " to " + req["destination"])
-		err = os.Rename(req["location"], req["destination"])
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		w.WriteHeader(http.StatusNoContent)
+	if r.Method != http.MethodPut {
+		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
+		return
 	}
+
+	var req map[string]string
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&req)
+	fmt.Println("Move " + req["location"] + " to " + req["destination"])
+	err = os.Rename(req["location"], req["destination"])
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func Delete(w http.ResponseWriter, r *http.Request) {
 	SetupResponse(&w, r)
 
-	if r.Method == "DELETE" {
-		var req map[string]string
-		decoder := json.NewDecoder(r.Body)
-		err := decoder.Decode(&req)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		err = os.RemoveAll(req["path"])
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		w.WriteHeader(http.StatusNoContent)
+	if r.Method != http.MethodDelete {
+		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
+		return
 	}
+
+	var req map[string]string
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	err = os.RemoveAll(req["path"])
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }
