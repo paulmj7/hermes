@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/paulmj7/hermes.svg?branch=master)](https://travis-ci.com/paulmj7/hermes)
 
-Hermes is an filesystem management api to relay the contents of a volume in real time and provide system controls over http. When paired with [Homebase](https://github.com/paulmj7/homebase), they provide a distributed, multivolume storage server.
+Hermes is an filesystem management api to relay the contents of a volume in real time and provide system controls over HTTP. When paired with [Homebase](https://github.com/paulmj7/homebase), they provide a distributed, multivolume storage server.
 
 From [Wikipedia](https://en.wikipedia.org/wiki/Hermes), "Hermes is considered the herald of the gods ... Hermes functioned as the emissary and messenger."
 
@@ -10,14 +10,11 @@ From [Wikipedia](https://en.wikipedia.org/wiki/Hermes), "Hermes is considered th
 
 First, customize the config.json file in the src folder to serve your root volumes, as well as change the port if necessary.
 
-To run Hermes
-
+To run Hermes, either build from the Docker file or =>
 ```bash
 cd src
 go run .
 ```
-
-For production use, don't forget to portfoward the webserver properly.
 
 ## Usage
 
