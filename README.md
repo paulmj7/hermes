@@ -36,6 +36,12 @@ go run .
 - DELETE /api/delete
   - 204 deletes file or folder at the specified path
 
+Payload Scheme
+```
+{
+}
+```
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 

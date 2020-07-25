@@ -65,7 +65,7 @@ func ChangeDir(w http.ResponseWriter, r *http.Request) {
 
 	for _, f := range files {
 		destination := path.Join(req.Path, f.Name())
-		if blacklist[destination] {
+		if hiddenList[destination] {
 			continue
 		}
 		isFile, size, dateMod, e := ItemInfo(destination)

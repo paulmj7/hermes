@@ -7,12 +7,12 @@ import (
 )
 
 var roots []string
-var blacklist map[string]bool
+var hiddenList map[string]bool
 
 func main() {
 	config := ReadConfig("config.json")
 	roots = RootsStrings(config.Roots)
-	blacklist = BLMap(config.Blacklist)
+	hiddenList = BLMap(config.Hidden)
 	http.HandleFunc("/api", Index)
 	http.HandleFunc("/api/change_dir", ChangeDir)
 	http.HandleFunc("/api/retrieve", GetFile)

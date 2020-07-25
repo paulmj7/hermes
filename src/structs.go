@@ -20,7 +20,6 @@ type Item struct {
 type ReqBody struct {
 	Path string `json:"path"`
 	Root string `json:"root"`
-	//Direction int    `json:"direction"`
 }
 
 type CreateReqBody struct {
@@ -32,16 +31,16 @@ type ResBody struct {
 }
 
 type Config struct {
-	Port      string   `json:"port"`
-	Roots     []Root   `json:"roots"`
-	Blacklist []BLPath `json:"blacklist"`
+	Port   string       `json:"port"`
+	Roots  []Root       `json:"roots"`
+	Hidden []HiddenPath `json:"blacklist"`
 }
 
 type Root struct {
 	Path string `json:"path"`
 }
 
-type BLPath struct {
+type HiddenPath struct {
 	Path string `json:"path"`
 }
 
