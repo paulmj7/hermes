@@ -1,4 +1,4 @@
-package main
+package hermes
 
 import (
 	"bufio"
@@ -12,8 +12,8 @@ import (
 	"path"
 )
 
-func Index(w http.ResponseWriter, r *http.Request) {
-	SetupResponse(&w, r)
+func (worker *Worker) index(w http.ResponseWriter, r *http.Request) {
+	setupResponse(worker, &w, r)
 
 	if r.Method != http.MethodPost {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
@@ -23,7 +23,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	rootbrowser := []Item{}
 	i := 1
 
-	for _, item := range roots {
+	for _, item := range worker.Roots {
 		name, _ := SplitPath(item, "/")
 		tempItem := Item{Name: name, Path: item, Parent: "", Root: item, IsFile: false, Size: -1, DateMod: "", ID: i}
 		rootbrowser = append(rootbrowser, tempItem)
@@ -34,8 +34,8 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(rootbrowser)
 }
 
-func ChangeDir(w http.ResponseWriter, r *http.Request) {
-	SetupResponse(&w, r)
+func (worker *Worker) changeDir(w http.ResponseWriter, r *http.Request) {
+	setupResponse(worker, &w, r)
 
 	if r.Method != http.MethodPost {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
@@ -65,7 +65,7 @@ func ChangeDir(w http.ResponseWriter, r *http.Request) {
 
 	for _, f := range files {
 		destination := path.Join(req.Path, f.Name())
-		if blacklist[destination] {
+		if worker.Hidden[destination] {
 			continue
 		}
 		isFile, size, dateMod, e := ItemInfo(destination)
@@ -84,8 +84,8 @@ func ChangeDir(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(contents)
 }
 
-func GetFile(w http.ResponseWriter, r *http.Request) {
-	SetupResponse(&w, r)
+func (worker *Worker) getFile(w http.ResponseWriter, r *http.Request) {
+	setupResponse(worker, &w, r)
 
 	if r.Method != http.MethodPost {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
@@ -107,8 +107,8 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resBody)
 }
 
-func SendFile(w http.ResponseWriter, r *http.Request) {
-	SetupResponse(&w, r)
+func (worker *Worker) sendFile(w http.ResponseWriter, r *http.Request) {
+	setupResponse(worker, &w, r)
 
 	if r.Method != http.MethodGet {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
@@ -149,8 +149,8 @@ func SendFile(w http.ResponseWriter, r *http.Request) {
 	http.ServeContent(w, r, path, fi.ModTime(), f)
 }
 
-func SaveFile(w http.ResponseWriter, r *http.Request) {
-	SetupResponse(&w, r)
+func (worker *Worker) saveFile(w http.ResponseWriter, r *http.Request) {
+	setupResponse(worker, &w, r)
 
 	if r.Method != http.MethodPost {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
@@ -185,8 +185,8 @@ func SaveFile(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func CreateFolder(w http.ResponseWriter, r *http.Request) {
-	SetupResponse(&w, r)
+func (worker *Worker) createFolder(w http.ResponseWriter, r *http.Request) {
+	setupResponse(worker, &w, r)
 
 	if r.Method != http.MethodPost {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
@@ -211,8 +211,8 @@ func CreateFolder(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func Move(w http.ResponseWriter, r *http.Request) {
-	SetupResponse(&w, r)
+func (worker *Worker) move(w http.ResponseWriter, r *http.Request) {
+	setupResponse(worker, &w, r)
 
 	if r.Method != http.MethodPut {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
@@ -231,8 +231,8 @@ func Move(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func Delete(w http.ResponseWriter, r *http.Request) {
-	SetupResponse(&w, r)
+func (worker *Worker) delete(w http.ResponseWriter, r *http.Request) {
+	setupResponse(worker, &w, r)
 
 	if r.Method != http.MethodDelete {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
