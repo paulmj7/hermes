@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -63,17 +64,17 @@ func ChangeDir(w http.ResponseWriter, r *http.Request) {
 	i := 1
 
 	for _, f := range files {
-		path := req.Path + "/" + f.Name()
-		if blacklist[path] {
+		destination := path.Join(req.Path, f.Name())
+		if blacklist[destination] {
 			continue
 		}
-		isFile, size, dateMod, e := ItemInfo(path)
+		isFile, size, dateMod, e := ItemInfo(destination)
 		if e != nil {
 			fmt.Println(e)
 			return
 		}
 
-		tempItem := Item{Name: f.Name(), Path: path, Parent: req.Path, Root: req.Root, IsFile: isFile, Size: size, DateMod: dateMod, ID: i}
+		tempItem := Item{Name: f.Name(), Path: destination, Parent: req.Path, Root: req.Root, IsFile: isFile, Size: size, DateMod: dateMod, ID: i}
 		contents = append(contents, tempItem)
 		i++
 	}
@@ -157,7 +158,7 @@ func SaveFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	r.ParseMultipartForm(32 << 20)
-	path := r.FormValue("path")
+	destination := r.FormValue("path")
 	fi, handler, err := r.FormFile("file")
 	if err != nil {
 		fmt.Println(err)
@@ -166,7 +167,7 @@ func SaveFile(w http.ResponseWriter, r *http.Request) {
 
 	defer fi.Close()
 
-	f, e := os.Create(path + "/" + handler.Filename)
+	f, e := os.Create(path.Join(destination + "/" + handler.Filename))
 	if e != nil {
 		fmt.Println(e)
 		return
