@@ -30,6 +30,10 @@ func (w Worker) HideRoot(path string) {
 	w.Hidden[path] = true
 }
 
+func (w Worker) Listen(route string, handler func(http.ResponseWriter, *http.Request)) {
+	http.HandleFunc(route, handler)
+}
+
 func (w Worker) Serve() {
 	http.HandleFunc("/api", w.index)
 	http.HandleFunc("/api/change_dir", w.changeDir)
