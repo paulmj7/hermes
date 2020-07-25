@@ -8,12 +8,30 @@ From [Wikipedia](https://en.wikipedia.org/wiki/Hermes), "Hermes is considered th
 
 ## Installation
 
-First, customize the config.json file in the src folder to serve your root volumes, as well as change the port if necessary.
-
-To run Hermes, either build from the Docker file or =>
+Running with Docker =>
 ```bash
-cd src
-go run .
+docker build -t hermes .
+docker run -p <PORT>:3000 hermes
+```
+
+Using the source code =>
+
+```bash
+go get github.com/paulmj7/hermes/hermes
+```
+
+```go
+import "github.com/paulmj7/hermes/hermes"
+
+func main() {
+  port := ":3000"
+	roots := []string{"desired/path/to/folder"}
+	hiddenFiles := make(map[string]bool)
+	hiddenFiles["block/this/path"] = true
+	corsEnabled := false
+	w := hermes.Worker{port, roots, hiddenFiles, corsEnabled}
+	w.Serve()
+}
 ```
 
 ## Usage
