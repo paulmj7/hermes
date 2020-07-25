@@ -9,6 +9,7 @@ type Worker struct {
 	Port   string
 	Roots  []string
 	Hidden map[string]bool
+	CORS   bool
 }
 
 func (w Worker) WatchRoot(path string) {
@@ -32,12 +33,12 @@ func (w Worker) HideRoot(path string) {
 func (w Worker) Serve() {
 	http.HandleFunc("/api", w.index)
 	http.HandleFunc("/api/change_dir", w.changeDir)
-	http.HandleFunc("/api/retrieve", getFile)
-	http.HandleFunc("/api/send", sendFile)
-	http.HandleFunc("api/upload", saveFile)
-	http.HandleFunc("api/create", createFolder)
-	http.HandleFunc("/api/move", move)
-	http.HandleFunc("/api/delete", delete)
+	http.HandleFunc("/api/retrieve", w.getFile)
+	http.HandleFunc("/api/send", w.sendFile)
+	http.HandleFunc("api/upload", w.saveFile)
+	http.HandleFunc("api/create", w.createFolder)
+	http.HandleFunc("/api/move", w.move)
+	http.HandleFunc("/api/delete", w.delete)
 	log.Fatal(http.ListenAndServe(w.Port, nil))
 }
 

@@ -13,7 +13,7 @@ import (
 )
 
 func (worker *Worker) index(w http.ResponseWriter, r *http.Request) {
-	SetupResponse(&w, r)
+	setupResponse(worker, &w, r)
 
 	if r.Method != http.MethodPost {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
@@ -35,7 +35,7 @@ func (worker *Worker) index(w http.ResponseWriter, r *http.Request) {
 }
 
 func (worker *Worker) changeDir(w http.ResponseWriter, r *http.Request) {
-	SetupResponse(&w, r)
+	setupResponse(worker, &w, r)
 
 	if r.Method != http.MethodPost {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
@@ -84,8 +84,8 @@ func (worker *Worker) changeDir(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(contents)
 }
 
-func getFile(w http.ResponseWriter, r *http.Request) {
-	SetupResponse(&w, r)
+func (worker *Worker) getFile(w http.ResponseWriter, r *http.Request) {
+	setupResponse(worker, &w, r)
 
 	if r.Method != http.MethodPost {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
@@ -107,8 +107,8 @@ func getFile(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resBody)
 }
 
-func sendFile(w http.ResponseWriter, r *http.Request) {
-	SetupResponse(&w, r)
+func (worker *Worker) sendFile(w http.ResponseWriter, r *http.Request) {
+	setupResponse(worker, &w, r)
 
 	if r.Method != http.MethodGet {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
@@ -149,8 +149,8 @@ func sendFile(w http.ResponseWriter, r *http.Request) {
 	http.ServeContent(w, r, path, fi.ModTime(), f)
 }
 
-func saveFile(w http.ResponseWriter, r *http.Request) {
-	SetupResponse(&w, r)
+func (worker *Worker) saveFile(w http.ResponseWriter, r *http.Request) {
+	setupResponse(worker, &w, r)
 
 	if r.Method != http.MethodPost {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
@@ -185,8 +185,8 @@ func saveFile(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func createFolder(w http.ResponseWriter, r *http.Request) {
-	SetupResponse(&w, r)
+func (worker *Worker) createFolder(w http.ResponseWriter, r *http.Request) {
+	setupResponse(worker, &w, r)
 
 	if r.Method != http.MethodPost {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
@@ -211,8 +211,8 @@ func createFolder(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func move(w http.ResponseWriter, r *http.Request) {
-	SetupResponse(&w, r)
+func (worker *Worker) move(w http.ResponseWriter, r *http.Request) {
+	setupResponse(worker, &w, r)
 
 	if r.Method != http.MethodPut {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
@@ -231,8 +231,8 @@ func move(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func delete(w http.ResponseWriter, r *http.Request) {
-	SetupResponse(&w, r)
+func (worker *Worker) delete(w http.ResponseWriter, r *http.Request) {
+	setupResponse(worker, &w, r)
 
 	if r.Method != http.MethodDelete {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
