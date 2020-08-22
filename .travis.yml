@@ -6,6 +6,5 @@ before_script:
 
 script:
   - test -z $(gofmt -s -l $GO_FILES)
-  - go test -v ./src
-  - go vet ./src
+  - go vet ./hermes
   - gocyclo -over 19 $GO_FILES
